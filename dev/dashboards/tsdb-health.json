@@ -1,0 +1,41 @@
+{
+  "title": "TimescaleDB Health (plugin dev)",
+  "uid": "tsdb-health-plugin",
+  "schemaVersion": 39,
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "refresh": "30s",
+  "tags": [
+    "umh",
+    "plugin"
+  ],
+  "panels": [
+    {
+      "id": 1,
+      "type": "custom-timescale-health-panel",
+      "title": "",
+      "gridPos": {
+        "h": 28,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "datasourceUid": "tsdb",
+        "staleMinutes": 30,
+        "diskGb": 100,
+        "sortBy": "size",
+        "hideSchemas": "",
+        "showHeader": true,
+        "showProjection": true,
+        "showRegular": true,
+        "showJobs": true,
+        "showSizes": true,
+        "barColorScheme": "classic"
+      },
+      "targets": []
+    }
+  ]
+}

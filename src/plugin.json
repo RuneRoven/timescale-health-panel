@@ -1,0 +1,17 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "TimescaleDB Health",
+  "id": "custom-timescale-health-panel",
+  "info": {
+    "keywords": ["panel", "timescaledb", "hypertable", "health", "compression", "storage"],
+    "description": "One glanceable board of every hypertable: freshness, size, compression. Andon design, UMH palette, follows the Grafana theme.",
+    "author": { "name": "Daniel Helmersson" },
+    "logos": { "small": "img/logo.svg", "large": "img/logo.svg" },
+    "links": [], "screenshots": [], "version": "1.0.8", "updated": "2026-09-03"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=10.0.0",
+    "plugins": []
+  }
+}
