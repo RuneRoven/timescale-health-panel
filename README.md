@@ -89,6 +89,36 @@ environment:
 For a managed/public Grafana that refuses unsigned plugins, sign it with
 `@grafana/sign-plugin` (needs a Grafana Cloud API key) — a separate step.
 
+## Troubleshooting: panel stuck on "Loading plugin panel…" / blank
+
+Not this plugin. Grafana ships **preload apps** (e.g. `grafana-lokiexplore-app`,
+`grafana-exploretraces-app`, `grafana-pyroscope-app`,
+`grafana-metricsdrilldown-app`) whose `module.js` can 404 on `react/jsx-runtime`.
+That failed preload throws inside Grafana's shared plugin-load `Promise.all` and
+**aborts the loader for every panel plugin** — so this panel (and any other custom
+panel) never mounts. Console shows:
+
+```
+SystemJS: failed to resolve 'react/jsx-runtime'
+Could not load plugin: 404 ... react/jsx-runtime from .../grafana-lokiexplore-app/module.js
+```
+
+Fix — disable the offending apps (note: **comma-separated**; a space-separated
+value is silently ignored):
+
+```
+GF_PLUGINS_DISABLE_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
+```
+
+or in `grafana.ini`:
+
+```ini
+[plugins]
+disable_plugins = grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
+```
+
+Restart Grafana. Confirmed on Grafana 11.6.1; keep the app you actually use.
+
 ## Build & run
 
 ```bash
