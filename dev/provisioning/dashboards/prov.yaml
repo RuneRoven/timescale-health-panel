@@ -1,6 +1,0 @@
-apiVersion: 1
-providers:
-  - name: dev
-    type: file
-    allowUiUpdates: true
-    options: { path: /var/lib/grafana/dashboards, foldersFromFilesStructure: false }

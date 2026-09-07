@@ -33,7 +33,7 @@ never sees SQL — they set only:
 - Stale threshold, disk size (for the projection), sort, hidden schemas, and
   which sections to show.
 
-**No install prerequisites** (since v1.0.8). The panel uses only supported,
+**No install prerequisites.** The panel uses only supported,
 version-stable TimescaleDB catalog views and functions — compression via
 `hypertable_compression_stats()` (definer-rights, no grant needed), freshness via
 a per-table `max(<time col>)` union it builds itself. Works on every TimescaleDB
@@ -67,7 +67,7 @@ mechanism as `umh-datasource`. Add to the Grafana service env:
 
 ```yaml
 environment:
-  - GF_INSTALL_PLUGINS=https://github.com/RuneRoven/timescale-health-panel/releases/download/v1.0.8/custom-timescale-health-panel-1.0.8.zip;custom-timescale-health-panel
+  - GF_INSTALL_PLUGINS=https://github.com/RuneRoven/timescale-health-panel/releases/download/v1.1.0/custom-timescale-health-panel-1.1.0.zip;custom-timescale-health-panel
   - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=custom-timescale-health-panel
   # Grafana auto-installs preload apps (loki explore etc.) that 404 on
   # react/jsx-runtime and block ALL custom panels. Disable them (comma-separated):
@@ -84,7 +84,7 @@ allow-listed.
 
 1. **Files** — unzip so the folder name equals the id:
    ```bash
-   unzip custom-timescale-health-panel-1.0.8.zip -d /var/lib/grafana/plugins/
+   unzip custom-timescale-health-panel-1.1.0.zip -d /var/lib/grafana/plugins/
    # -> /var/lib/grafana/plugins/custom-timescale-health-panel/
    ```
 2. **Allow the unsigned id** — `grafana.ini`:
@@ -140,19 +140,31 @@ disable_plugins = grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metr
 
 Restart Grafana. Confirmed on Grafana 11.6.1; keep the app you actually use.
 
-## Build & run
+## Build & develop
+
+Built on the official **`@grafana/create-plugin`** scaffold (`.config/` holds the
+managed webpack/jest/playwright config — don't edit it). Requires **Grafana ≥ 12**
+(`@emotion/css` is externalized, which Grafana shares only from v12).
 
 ```bash
-npm run typecheck && npm run build      # -> dist/
-
-# local test harness: Grafana + a seeded TimescaleDB with four hypertables
-# in four different states (fresh+compressed, compression-pending, stale, plain)
-cd dev && docker compose up -d
-open http://localhost:3001/d/tsdb-health-plugin      # anonymous admin
+npm install
+npm run typecheck && npm run build   # -> dist/
+npm run dev                          # watch build
+npm run server                       # scaffold's Grafana dev container
+npm run e2e                          # Playwright render/e2e tests (headless)
+npm run sign                         # sign (needs a Grafana Cloud access-policy token)
 ```
 
-The seed (`dev/sql/00-seed.sql`) deliberately produces one green, one yellow,
-one red and one grey card so every state is visible at once.
+Verify render headlessly against a clean Grafana (removes browser-cache confusion):
+
+```bash
+docker run -d --name gfe2e -p 3009:3000 -e GF_SECURITY_ADMIN_PASSWORD=admin \
+  -e GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=custom-timescale-health-panel \
+  -e GF_PLUGINS_DISABLE_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metricsdrilldown-app,grafana-pyroscope-app \
+  -v "$PWD/dist":/var/lib/grafana/plugins/custom-timescale-health-panel:ro grafana/grafana:12.3.0
+npm exec playwright install chromium
+GRAFANA_URL=http://localhost:3009 npm run e2e
+```
 
 ## Notes
 
