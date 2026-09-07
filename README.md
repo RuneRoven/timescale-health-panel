@@ -58,6 +58,27 @@ a per-table `max(<time col>)` union it builds itself. Works on every TimescaleDB
 
 ## Install for a customer
 
+Two ways. Both are unsigned, so the id must be allow-listed.
+
+### A. Hosted pull (recommended for the docker-compose example)
+
+Grafana downloads the plugin from the GitHub release on boot — the same
+mechanism as `umh-datasource`. Add to the Grafana service env:
+
+```yaml
+environment:
+  - GF_INSTALL_PLUGINS=https://github.com/RuneRoven/timescale-health-panel/releases/download/v1.0.8/custom-timescale-health-panel-1.0.8.zip;custom-timescale-health-panel
+  - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=custom-timescale-health-panel
+  # Grafana auto-installs preload apps (loki explore etc.) that 404 on
+  # react/jsx-runtime and block ALL custom panels. Disable them (comma-separated):
+  - GF_PLUGINS_DISABLE_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
+```
+
+Restart Grafana; it pulls and registers the panel. Needs outbound internet.
+Verified on Grafana 12.3.0.
+
+### B. Manual (no internet / air-gapped)
+
 Unsigned plugin — Grafana needs the files in its plugins dir **and** the id
 allow-listed.
 
