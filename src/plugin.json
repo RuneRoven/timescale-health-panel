@@ -6,12 +6,14 @@
   "info": {
     "keywords": ["panel", "timescaledb", "hypertable", "health", "compression", "storage"],
     "description": "One glanceable board of every hypertable: freshness, size, compression. Andon design, UMH palette, follows the Grafana theme.",
-    "author": { "name": "UMH" },
+    "author": { "name": "UMH Systems GmbH" },
     "logos": { "small": "img/logo.svg", "large": "img/logo.svg" },
-    "links": [], "screenshots": [], "version": "1.0.8", "updated": "2026-09-03"
+    "links": [], "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
   },
   "dependencies": {
-    "grafanaDependency": ">=10.0.0",
+    "grafanaDependency": ">=12.0.0",
     "plugins": []
   }
 }
