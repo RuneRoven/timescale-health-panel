@@ -10,6 +10,10 @@ services:
     ports: [ "3001:3000" ]
     environment:
       - GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=custom-timescale-health-panel
+      # Grafana's bundled preload apps (lokiexplore etc.) 404 on react/jsx-runtime
+      # and their failed preload aborts the plugin loader -> blank panels.
+      # Disable them (COMMA-separated; space-separated is silently ignored).
+      - GF_PLUGINS_DISABLE_PLUGINS=grafana-lokiexplore-app,grafana-exploretraces-app,grafana-metricsdrilldown-app,grafana-pyroscope-app
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_DISABLE_LOGIN_FORM=true
